@@ -1,0 +1,137 @@
+
+Ref:
+
+- https://cheats.rs/
+- https://doc.rust-jp.rs/book-ja/
+- https://doc.rust-lang.org/book/
+
+
+---
+
+- 次の動画を見る: https://www.youtube.com/watch?v=tw2WCjBTgRM
+    - hello_world: 
+        - cargo new と cargo run
+    - variable: 
+        - `let, let mut, println!("{}", a)`
+        - let を大量に用意するとパフォーマンスが下がる場合がある.
+        - `const` と `let` の違い
+            - let: compileの段階で決まらなくても良い(再代入ができないだけ)
+            - const: magic number などいれるとき
+            - 型注釈: 簡単な場合は書く必要はない場合もある. (analyzerのおかげ,vscodeの拡張機能)
+        - シャドウィング: 
+            - 同じ名前で複数宣言できる.(いつ使う?): letの場合
+            - `{}`の blockで scopeなど寿命がある. 
+            - block内で global変数と同じ名前を使っても良い.
+        - 静的:
+            - compileした時に型がわかる必要がある.
+            - 整数:
+                - arch: CPUのarchitectureによって最も早いものが使われる
+                    - usize, isize
+                - リテラル
+                    - あんすこ, 0x, 0o など 
+            - 整数や少数の演算:
+                - 同じ型である必要がある.
+                - as で 変換する.
+            - char:(Unicode)
+                - 1文字
+            - tuple:
+                - 型の書き方も (型,型)
+                - tuple に dot で 何番目の値を得る.
+            - 配列:
+                - stackにある , 長さ変えられない [,]
+                - [型;個数]
+                - 配列[番目]でアクセス
+                    - c,js,c++などに似ている
+                        - c++ではstd:: が推奨されているしね
+                    - rustはpanicとなる
+        - 関数
+            - snake_case
+            - 後に定義しても呼べる
+            - 引数
+                - 値をそのまま入れる場合は i32 や char でおけ
+                - 所有権を与えて良いかどうかで判断.
+            - 式と文について
+        - 制御文
+            - if
+                - 一つの場合は () で括らないようにする.
+                - boolで必要である. (0以外はtrueなどはダメ)
+                - elif ではなく　else if をつかう
+                - if は 式である.
+                    - つまり,戻り値は同じである必要がある.
+            - loop
+                - loop
+                    - 無限ループ
+                    - 'name : loop{} で labelをつけられる.
+                - while
+                - for
+                    - in 0..5 : 0以上5未満
+        - 所有権
+            - stack: 実行されているすぐ近くにある(少量)
+            - heap: OSが管理するたくさんの領域
+            - 所有者は一つ, 所有者が破棄されるとアタイも破棄される
+            - string
+                - &str : immutable
+                - しかし,stringは mutable
+                    - s = String::from("")
+                        - ""は&str
+                    - s.push_str("");
+                - capacityとlenについて
+            - blockから抜ければ勝手にOSにheapの連絡をする.
+            - move
+                - 所有権の移動
+                - bugの温床....
+            - clone
+                - 所有権とは別にheapを確保する.
+            - 関数の引数
+                - primitive型はstackにあるため, 消えない
+            - 参照と借用
+                - アンパッさんで借用すると,heap領域を指し示すやつを指し示すやつ(instack) を用意できる.
+            - 可変な借用
+                - 変えてるけど変更の可能性がある: &mut
+                - 一つだけ可変な参照をもてる.
+            - 普遍な借用
+                - これは何個でも大丈夫.
+            - dangling pointer
+                - heapはあるけど, stackが消される.
+                - これは良くないため compile error
+                - 対策: 所有権を上げればよい
+        - スライス型
+            - &a[1..3] など
+            - 普遍な参照と可変な参照をとるとまずい
+            - Stringは変わらないようになる.
+            - &str と &String
+        - struct
+            - 構造体: dataclass: 新しい型を用意できる.
+            - fieldsを用意
+            - Data {field_name: value, }
+                - 名前と変数が同じの場合は省略できる.
+                - {} なかで既に定義したものを展開できたりする.
+            - fieldには . でアクセスできる
+            - tuple-構造体
+            - Derive-debug:
+                - 全部を順番に表示してね.
+                - {:?} を使うと良い.
+            - impl で　構造体に関してのmethodを定義できる.
+                - &self で instance method
+                    - . で呼べる
+                    - &mut self で可変な参照も取れる.
+                - &self なしで class method
+                    - :: で呼べる.
+            - Self: 自分自身の型を表す.
+        - Enum
+            - :: で呼び出される
+            - それぞれメンバ変数を用意できる.
+                - structを用意すると楽
+            - 同じ型として扱える.
+            - struct同様にimplできる
+            - Option
+                - SomeかNoneをもつEnumでofficialで定義される.
+            - matchについて
+                - =>  とできる.
+                    - Some(number: i32) など書ける.
+                    - if let
+                        - Some側のカッコで, block内の変数を定義できる.
+                - enumについて処理を全て書かないといけない.
+                - これで,Evolution の 処理の忘れを防ぐことができる.
+            - 
+
