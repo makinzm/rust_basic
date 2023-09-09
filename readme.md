@@ -4,6 +4,8 @@ Ref:
 - https://cheats.rs/
 - https://doc.rust-jp.rs/book-ja/
 - https://doc.rust-lang.org/book/
+- https://docs.rs/
+    - https://doc.rust-lang.org/std/vec/struct.Vec.html
 
 - 次の動画を見る: https://www.youtube.com/watch?v=tw2WCjBTgRM
 ---
@@ -71,10 +73,20 @@ Ref:
     - 所有者は一つ, 所有者が破棄されるとアタイも破棄される
     - string
         - &str : immutable
-        - しかし,stringは mutable
+        - しかし,Stringは mutable
+            - String::new() などある.
             - s = String::from("")
                 - ""は&str
+                - 文字列リテラルは3章になる.
+            - push_strなど便利
             - s.push_str("");
+            - Stringの結合は + があるけど, formatマクロ が望ましい
+                - println と同じような者
+                - Stringは Vec<u8>の Wrapper
+                - lenなど はつかえるが 添字アクセスは どのbyte数などかなど
+                - 文字列のスライスはあるけど, byteによってエラーの発生が発生しうる.
+            - 文字列の場合は, charsが便利.
+                - s.chars().nth(2);
         - capacityとlenについて
     - blockから抜ければ勝手にOSにheapの連絡をする.
     - move
@@ -133,5 +145,73 @@ Ref:
                 - Some側のカッコで, block内の変数を定義できる.
         - enumについて処理を全て書かないといけない.
         - これで,Evolution の 処理の忘れを防ぐことができる.
-- 
+- File分割
+    - module単位になる.
+    - pub とつけると他のmoduleからも使える.
+    - 引用側からは, 
+    - pub mod module_name;
+    - use module_name::func;
+    - でできる.
+    - directory構造の場合.
+        - そのdirectoryと同じ名前のfileを作成してから,引用する.
+- Collection
+    - vector, hashMap など
+        - Vec::new(), vec![] (マクロ)
+            - &v で sliceを作成できる.
+        - &v[2] で借用しながら値をもらえる.
+            - ここは普遍な参照となる. (&mut v[0] などできる?)
+        - .get の場合は Noneなのか　Someなのか意識できる.
+        - for i &mut v {
+        -   *i += 50; // i で 参照外しができる.   
+        - }
+    - String
+    - HashMap
+        - std::collections:HashMap
+        - insert, entry, or_insert などができる.
+        - HashMap::new()
+        - get で 値を受け取ることができる(Optionが帰ってくる)
+        - &でforを回せる(key,value)
+        - 独自のhashも使えるね
+    - btreeMap, btreeSet などたくさんある.
+- エラー処理 
+    - Panic処理 
+        - RUST_BACKTRACE=1 cargo run とやると便利.
+        - 比較的 最終手段
+    - Result
+        - Ok(file)
+        - Err(ref error) if などで matchのrefなどがある
+        - unwrap(); result を okだったり中身, errorの場合はpanicにできる.
+        - 戻り値で Result を使うと便利.
+        - Result を管理するのがめんどいため, ? 演算子を使うと便利であったりする.
+            - ?は Resultを返すときだけ.
+        - match処理をする.
+        - 描いてる側は絶対良いとされるときは unwrapなどが良い.
+    - panic or result
+        - ガイドライン: https://doc.rust-jp.rs/book-ja/ch09-03-to-panic-or-not-to-panic.html#%E3%82%A8%E3%83%A9%E3%83%BC%E5%87%A6%E7%90%86%E3%81%AE%E3%82%AC%E3%82%A4%E3%83%89%E3%83%A9%E3%82%A4%E3%83%B3
 
+- Generics, Trait, Lifetime
+    - Generics
+        - <T> と関数につければ良い.
+            - ただ,Tが比較可能かわからない場合　だめ
+            - trait の知識が必要.
+        - 利用する際には <> の中身は埋める必要はない.
+        - <U> <E> なども利用すると良い.
+        - impl<T> STRUCT<T> というみなれなさ: 
+            - ある型のみに impl できたりもする.
+            - 一つ目は宣言で,  二つ目が使用されるみたいなもの
+    - Trait
+        - interface みたいなもの
+        - implements ではなく : impl TRAIT for STRUCT のように使う.
+        - <T: TRAIT> のようにできる(TRAITが実装される型 Tについて)
+        - 型として　TRAIT は足し算で書ける.
+        - whereで traitの条件を まとめたりできる
+        - return で　impl Trait を書くのは難しい.
+        - `+ Copy` で moveをなくして, copyするようにできる.
+    - Lifetime
+        - &'life_time_name で life_time を関数に教えられる.
+            - たくさんある場合,短いものが採用される.
+        - fn func<'life_time_name>
+        - 関数と戻り値だけ指定した場合. 関数ないでしか生きられない.
+        - 構造体で参照を持っている場合,も定義できる.
+            - 構造体の中のfieldにあると panicになる.
+        - genericsと併用する場合は, life_timeが先.
